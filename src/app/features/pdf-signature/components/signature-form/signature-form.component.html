@@ -1,0 +1,8 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <input type="text" formControlName="signerName" placeholder="Nom du signataire" />
+  <textarea formControlName="additionalText" placeholder="Texte additionnel (optionnel)"></textarea>
+  <input type="number" formControlName="pageNumber" min="1" />
+  <input type="number" formControlName="x" min="0" />
+  <input type="number" formControlName="y" min="0" />
+  <button type="submit" [disabled]="isLoading">Signer le PDF</button>
+</form>
