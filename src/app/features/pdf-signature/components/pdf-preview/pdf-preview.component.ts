@@ -37,7 +37,7 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
   @ViewChildren('canvas') canvasRefs!: QueryList<ElementRef<HTMLCanvasElement>>;
   @Input() file: File | null = null;
   @Input() signerName = '';
-  @Input() signaturePosition: SignaturePosition = { pageNumber: 1, x: 24, y: 24 };
+  @Input() signaturePosition: SignaturePosition = { pageNumber: 1, x: 100, y: 100 };
   @Input() isSignatureVisible = false;
   @Output() signatureMoved = new EventEmitter<SignaturePosition>();
 
