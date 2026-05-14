@@ -1,0 +1,7 @@
+.app-header { position: sticky; top: 0; z-index: 1000; gap: .75rem; }
+.logo { background: rgba(255,255,255,.14); border-radius: 50%; padding: .45rem; }
+.title-group { display: flex; flex-direction: column; line-height: 1.1; }
+.app-name { font-size: 1rem; font-weight: 700; letter-spacing: .2px; }
+.slogan { font-size: .72rem; opacity: .9; }
+.spacer { flex: 1; }
+.secure-badge { font-size: .8rem; border: 1px solid rgba(255,255,255,.55); border-radius: 999px; padding: .2rem .65rem; }

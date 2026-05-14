@@ -45,6 +45,7 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
   private pdfDocument: PDFDocumentProxy | null = null;
   private activeRenderTasks: RenderTask[] = [];
   private isViewReady = false;
+  private pendingRender = false;
 
   ngAfterViewInit(): void {
     this.isViewReady = true;
@@ -53,6 +54,7 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['file'] && this.isViewReady) {
+      this.pendingRender = true;
       void this.renderPdf();
     }
   }
@@ -64,14 +66,22 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   async renderPdf(): Promise<void> {
-    if (!this.isViewReady || !this.file || this.isRendering) {
-      if (!this.file) {
-        this.cleanupCanvases();
-        this.renderedPages = [];
-      }
+    if (!this.isViewReady) {
       return;
     }
 
+    if (!this.file) {
+      this.pendingRender = false;
+        this.cleanupCanvases();
+        this.renderedPages = [];
+      return;
+    }
+
+    if (this.isRendering) {
+      return;
+    }
+
+    this.pendingRender = false;
     this.isRendering = true;
     this.isLoading = true;
     this.renderToken += 1;
@@ -103,6 +113,10 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
     } finally {
       this.isRendering = false;
       this.isLoading = false;
+      if (this.pendingRender) {
+        this.pendingRender = false;
+        void this.renderPdf();
+      }
     }
   }
 
