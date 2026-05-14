@@ -1,6 +1,16 @@
 <section class="layout">
-  <div class="left">
+  <aside class="left">
     <app-pdf-upload [maxFileSizeBytes]="maxFileSizeBytes" (fileSelected)="onFileSelected($event)" (validationError)="onValidationError($event)" />
+
+    <mat-card class="status-card">
+      <h3>État</h3>
+      <div class="status-line" *ngIf="!(selectedFile$ | async)">Aucun PDF sélectionné</div>
+      <div class="status-line" *ngIf="(loading$ | async)">Signature en cours…</div>
+      <div class="status-line" *ngIf="(selectedFile$ | async) && !(loading$ | async)">PDF chargé</div>
+      <div class="status-line" *ngIf="(signerName$ | async)">Signature prête</div>
+      <div class="status-line error" *ngIf="error$ | async as error">{{ error }}</div>
+    </mat-card>
+
     <app-signature-form
       [signerName]="(signerName$ | async) ?? ''"
       [additionalText]="(additionalText$ | async) ?? ''"
@@ -10,13 +20,14 @@
     />
     <app-signature-actions [loading]="(loading$ | async) ?? false" (sign)="onSign()" />
     <app-signature-result [signedPdf]="signedPdf$ | async" (clear)="clearSignedResult()" />
-  </div>
-  <div class="right">
+  </aside>
+
+  <main class="right">
     <app-pdf-preview
       [file]="(selectedFile$ | async)"
       [signerName]="(signerName$ | async) ?? ''"
       [signaturePosition]="(signaturePosition$ | async) ?? {pageNumber:1,x:24,y:24}"
       (signatureMoved)="onSignatureMoved($event)"
     />
-  </div>
+  </main>
 </section>

@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, DestroyRef, inject } from '@angular/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { API_CONFIG } from '../../../../core/config/api.config';
@@ -12,7 +13,7 @@ import { SignatureResultComponent } from '../../components/signature-result/sign
 import { clearResult, signPdf, signPdfFailure, updateAdditionalText, updateSignaturePosition, updateSignerName, uploadPdfSelected } from '../../store/pdf-signature.actions';
 import { additionalText, loading, selectError, selectSelectedFile, selectSignedPdf, signaturePosition, signerName } from '../../store/pdf-signature.selectors';
 
-@Component({ selector: 'app-pdf-signature-page', standalone: true, imports: [AsyncPipe, MatSnackBarModule, PdfUploadComponent, SignatureFormComponent, PdfPreviewComponent, SignatureActionsComponent, SignatureResultComponent], templateUrl: './pdf-signature-page.component.html', styleUrl: './pdf-signature-page.component.scss' })
+@Component({ selector: 'app-pdf-signature-page', standalone: true, imports: [AsyncPipe, MatSnackBarModule, MatCardModule, PdfUploadComponent, SignatureFormComponent, PdfPreviewComponent, SignatureActionsComponent, SignatureResultComponent], templateUrl: './pdf-signature-page.component.html', styleUrl: './pdf-signature-page.component.scss' })
 export class PdfSignaturePageComponent {
   private readonly store = inject(Store);
   private readonly snackBar = inject(MatSnackBar);
@@ -27,7 +28,7 @@ export class PdfSignaturePageComponent {
   readonly signedPdf$ = this.store.select(selectSignedPdf);
 
   constructor(){
-    this.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(error=>{ if(error){ this.snackBar.open(error,'Fermer',{duration:3500});}});
+    this.error$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((error: string | null) => { if (error) { this.snackBar.open(error, 'Fermer', { duration: 3500 }); } });
   }
   onFileSelected(file: File): void { this.store.dispatch(uploadPdfSelected({ file })); }
   onValidationError(error: string): void { this.store.dispatch(signPdfFailure({ error })); }

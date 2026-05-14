@@ -1,18 +1,27 @@
 <mat-card class="preview-card" *ngIf="file; else emptyState">
-  <div class="preview-scroll">
+  <div class="loading" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Chargement du PDF…</span>
+  </div>
+
+  <div class="preview-scroll" *ngIf="!isLoading">
     <div class="page-block" *ngFor="let page of renderedPages">
       <div class="page-label">Page {{ page.pageNumber }}</div>
-      <div class="canvas-wrapper">
+      <div class="canvas-wrapper" [id]="page.boundaryId">
         <canvas #canvas></canvas>
         <app-draggable-signature
           *ngIf="signaturePosition.pageNumber === page.pageNumber"
           [x]="signaturePosition.x"
-          [y]="page.height - signaturePosition.y"
+          [y]="getSignatureTop(page)"
           [signerName]="signerName"
+          [boundarySelector]="'#' + page.boundaryId"
           (positionChange)="onSignatureMove($event, page)"
         />
       </div>
     </div>
   </div>
 </mat-card>
-<ng-template #emptyState><mat-card class="empty">Importez un PDF pour afficher la prévisualisation complète.</mat-card></ng-template>
+
+<ng-template #emptyState>
+  <mat-card class="empty">Importez un PDF pour afficher la prévisualisation complète.</mat-card>
+</ng-template>
