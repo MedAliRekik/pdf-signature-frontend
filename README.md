@@ -1,63 +1,93 @@
 # PDF Signature Frontend (Angular)
 
-Application de signature PDF avec **Angular**, **Angular Material**, **NgRx**, lazy-loading et prévisualisation PDF **multi-pages**.
+Application Angular portfolio pour **signature visuelle de PDF** avec UX professionnelle, confidentialité expliquée clairement, et architecture scalable.
 
-## Fonctionnalités clés
-- Upload sécurisé (`application/pdf` uniquement + taille max configurable).
-- Prévisualisation de toutes les pages PDF avec scroll vertical.
-- Rendu PDF.js robuste avec un **canvas distinct par page**.
-- Signature visuelle déplaçable au-dessus du PDF (drag & drop limité à la page).
-- Calcul automatique des coordonnées `pageNumber / x / y` pour le backend (repère bas-gauche compatible PDFBox).
-- Envoi vers backend Spring Boot : `POST /api/pdf/sign` (`file` + payload JSON).
-- Téléchargement du PDF signé.
+## Objectif produit
+Permettre à l'utilisateur de :
+1. Importer un PDF.
+2. Visualiser toutes les pages.
+3. Générer une signature visuelle depuis son nom.
+4. Placer la signature (drag & drop) sur une page.
+5. Télécharger le PDF signé par le backend.
 
-## Design Angular Material
-- Barre d’application avec branding.
-- Layout 2 colonnes : panneau actions à gauche, preview PDF scrollable à droite.
-- Utilisation de `MatCard`, `MatButton`, `MatIcon`, `MatFormField`, `MatInput`, `MatProgressSpinner`, `MatSnackBar`, `MatTooltip`.
-- États UI explicites : aucun PDF, chargement, prêt, erreur.
-- Responsive sur mobile/tablette.
+## Workflow utilisateur
+**Importer → Placer → Signer → Télécharger**
+
+- Upload validé (`application/pdf`, taille max).
+- Prévisualisation multi-pages via PDF.js (scroll vertical).
+- Signature déplaçable par page.
+- Calcul et envoi `pageNumber`, `x`, `y` au backend.
+- Retour backend en `Blob` puis téléchargement local.
+
+## Confidentialité & sécurité (discours honnête)
+- Traitement temporaire du document.
+- Aucun stockage applicatif prévu côté frontend.
+- Données utilisées uniquement pendant la session.
+- Signature **visuelle simple** : ce projet ne prétend pas fournir une signature électronique certifiée.
+
+## Limites actuelles
+- Certification légale/eIDAS non implémentée.
+- Chiffrement bout-en-bout non implémenté.
+- Les garanties définitives de conservation dépendent du backend déployé.
+
+## Stack technique
+- Angular (standalone components)
+- Angular Material
+- NgRx (actions, reducer, selectors, effects)
+- Lazy loading de la feature `pdf-signature`
+- PDF.js pour rendu multi-pages
 
 ## Architecture
-- `src/app/core` : services et configuration API.
-- `src/app/shared` : mutualisation UI/Material.
-- `src/app/features/pdf-signature` : composants, pages, modèles, store NgRx.
-- Lazy loading via `app.routes.ts` + `features/pdf-signature/pdf-signature.routes.ts`.
 
-## NgRx
-Actions métier principales :
-- `uploadPdfSelected`
-- `updateSignerName`
-- `updateAdditionalText`
-- `updateSignaturePosition`
-- `signPdf`
-- `signPdfSuccess`
-- `signPdfFailure`
+```text
+src/app
+├── core
+│   ├── config
+│   ├── constants
+│   └── services
+├── shared
+│   ├── components
+│   └── material
+└── features
+    └── pdf-signature
+        ├── components
+        ├── models
+        ├── pages
+        ├── store
+        └── pdf-signature.routes.ts
+```
 
-State principal :
+## NgRx : state géré
 - `selectedFile`
 - `signerName`
 - `additionalText`
 - `signaturePosition`
 - `isSignaturePlaced`
-- `status`
+- `status` (`idle | loading | success | error`)
 - `signedPdf`
 - `error`
 
-## Gestion PDF.js (anti-erreur canvas)
-- Annulation des `renderTask` en cours quand le PDF change.
-- Séquencement de rendu page par page (attente de fin de `renderTask.promise`).
-- Protection via drapeau `isRendering` pour éviter les doubles déclenchements.
-- Nettoyage des canvas entre deux chargements.
-- Nettoyage au destroy pour éviter les memory leaks.
+## Backend attendu
+- Endpoint: `POST {apiBaseUrl}/api/pdf/sign`
+- multipart:
+  - `file`: PDF
+  - `request`: JSON `{ signerName, additionalText, pageNumber, x, y }`
+- Réponse: PDF signé (binaire)
+
+## Configuration
+- `src/environments/environment.ts` : URL backend (`apiBaseUrl`)
+- `src/app/core/config/api.config.ts` : endpoints API
+- `src/app/core/constants/file.constants.ts` : type MIME + limite taille
 
 ## Lancement
-1. Lancer le backend Spring Boot sur `http://localhost:8080`.
-2. Lancer le frontend :
-
 ```bash
 npm install
 npm start
 ```
+Puis ouvrir `http://localhost:4200`.
 
-3. Ouvrir `http://localhost:4200`.
+## Prochaines évolutions
+- Signature électronique certifiée (prestataire qualifié).
+- Historique utilisateur côté backend (optionnel, avec consentement).
+- Zoom PDF et alignement assisté.
+- E2E tests et monitoring UX.

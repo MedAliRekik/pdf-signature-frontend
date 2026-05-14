@@ -1,4 +1,5 @@
-export const API_CONFIG = {
-  pdfSignUrl: 'http://localhost:8080/api/pdf/sign',
-  maxPdfFileSizeBytes: 10 * 1024 * 1024
+import { environment } from '../../../environments/environment';
+
+export const API_ENDPOINTS = {
+  pdfSign: `${environment.apiBaseUrl}/api/pdf/sign`
 } as const;
