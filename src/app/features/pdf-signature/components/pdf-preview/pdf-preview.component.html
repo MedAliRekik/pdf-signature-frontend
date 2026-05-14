@@ -1,0 +1,14 @@
+<div class="preview-card" *ngIf="file; else emptyState">
+  <div class="canvas-wrapper">
+    <canvas #canvas></canvas>
+    <app-draggable-signature
+      [x]="signatureX"
+      [y]="canvasHeight - signatureY"
+      [signerName]="signerName"
+      (positionChange)="onSignatureMove($event)"
+    />
+  </div>
+</div>
+<ng-template #emptyState>
+  <div class="empty">Importez un PDF pour afficher la prévisualisation.</div>
+</ng-template>

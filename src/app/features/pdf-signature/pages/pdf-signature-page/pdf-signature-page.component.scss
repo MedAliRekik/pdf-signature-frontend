@@ -1,2 +1,6 @@
-section { max-width: 720px; margin: 2rem auto; display: grid; gap: 1rem; }
-input, textarea, button { width: 100%; padding: 0.5rem; }
+:host{display:block;padding:2rem;background:#f1f5f9;min-height:100vh}
+.layout{display:grid;grid-template-columns:360px 1fr;gap:1.5rem;align-items:start}
+.left{display:grid;gap:1rem}
+.right{min-height:500px}
+.card{background:#fff;padding:1rem;border-radius:12px;box-shadow:0 8px 20px rgba(15,23,42,.08)}
+.error{padding:.8rem 1rem;background:#fee2e2;color:#b91c1c;border-radius:8px}

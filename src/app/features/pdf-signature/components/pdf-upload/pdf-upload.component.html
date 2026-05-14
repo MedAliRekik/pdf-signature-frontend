@@ -1,2 +1,5 @@
-<label for="pdfFile">Fichier PDF</label>
-<input id="pdfFile" type="file" accept="application/pdf" (change)="onFileChange($event)" />
+<div class="card">
+  <h3>Importer un PDF</h3>
+  <input type="file" accept="application/pdf" (change)="onFileChange($event)" />
+  <p>Taille max: {{ maxFileSizeBytes / (1024 * 1024) }} Mo</p>
+</div>

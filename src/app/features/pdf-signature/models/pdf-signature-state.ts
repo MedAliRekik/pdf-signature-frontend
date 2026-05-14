@@ -4,7 +4,10 @@ export type PdfSignatureStatus = 'idle' | 'loading' | 'success' | 'error';
 
 export interface PdfSignatureState {
   selectedFile: File | null;
-  formValue: PdfSignatureRequest;
+  signerName: string;
+  additionalText: string;
+  signaturePosition: Pick<PdfSignatureRequest, 'x' | 'y' | 'pageNumber'>;
+  isSignaturePlaced: boolean;
   status: PdfSignatureStatus;
   signedPdf: Blob | null;
   error: string | null;
