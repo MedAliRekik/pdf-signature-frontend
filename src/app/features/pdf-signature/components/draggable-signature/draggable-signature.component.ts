@@ -1,4 +1,4 @@
-import { CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDragEnd, CdkDragMove, DragDropModule } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
@@ -11,6 +11,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       class="signature"
       [cdkDragBoundary]="boundarySelector"
       [cdkDragFreeDragPosition]="{ x, y }"
+      (cdkDragMoved)="onDragMoved($event)"
       (cdkDragEnded)="onDragEnded($event)"
     >
       {{ signerName || 'Signature' }}
@@ -26,6 +27,11 @@ export class DraggableSignatureComponent {
   @Input() signerName = '';
   @Input() boundarySelector = '';
   @Output() positionChange = new EventEmitter<{ x: number; y: number }>();
+
+  onDragMoved(event: CdkDragMove): void {
+    const position = event.source.getFreeDragPosition();
+    this.positionChange.emit({ x: Math.max(0, position.x), y: Math.max(0, position.y) });
+  }
 
   onDragEnded(event: CdkDragEnd): void {
     const position = event.source.getFreeDragPosition();
