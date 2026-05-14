@@ -1,48 +1,42 @@
 # PDF Signature Frontend (Angular)
 
-Interface de signature PDF visuelle en Angular + NgRx.
+Application professionnelle de signature PDF avec **Angular 19**, **Angular Material**, **NgRx** et prévisualisation **multi-pages scrollable**.
 
-## Objectif métier
-L’utilisateur peut importer un PDF, voir la prévisualisation, générer une signature visuelle à partir de son nom, la déplacer sur le document, puis signer et télécharger le PDF final.
-
-## Workflow utilisateur
-1. Upload d’un fichier PDF (validation type + taille).
-2. Affichage du PDF (page 1, structure prête multi-pages).
-3. Saisie du nom et du texte additionnel.
-4. Signature manuscrite visuelle superposée au PDF.
-5. Drag & drop de la signature sur le canvas.
-6. Conversion des coordonnées écran vers repère PDF (Y inversé).
-7. Envoi backend `POST /api/pdf/sign` avec:
-   - `file`
-   - `request` JSON: `signerName`, `additionalText`, `pageNumber`, `x`, `y`
-8. Téléchargement du PDF signé.
+## Fonctionnalités
+- Import sécurisé d'un fichier PDF (type + taille max).
+- Prévisualisation de **toutes les pages** du PDF avec scroll vertical.
+- Signature visuelle manuscrite générée depuis le nom du signataire.
+- Signature déplaçable sur la page choisie (coordonnées auto `pageNumber/x/y`).
+- Texte additionnel optionnel.
+- Envoi backend `POST http://localhost:8080/api/pdf/sign` avec `file` + `request` JSON.
+- Téléchargement du PDF signé.
 
 ## Architecture
-- `core/services`: service HTTP backend.
-- `features/pdf-signature/pages`: page principale lazy-loadée.
-- `features/pdf-signature/components`: upload, formulaire, preview PDF, signature drag & drop, actions.
-- `features/pdf-signature/store`: actions, reducer, selectors, effects NgRx.
-- `features/pdf-signature/models`: state et modèles de requête.
+- `src/app/core`: services et config API (`api.config.ts`).
+- `src/app/shared/material`: module Material partagé.
+- `src/app/features/pdf-signature`: composants métier, modèles, page, routes lazy, store NgRx.
+
+## Angular Material
+Composants utilisés : Toolbar, Card, Button, Icon, Input/FormField, Spinner, SnackBar, Divider, Tooltip.
 
 ## NgRx
-Actions clés:
-- `uploadPdfSelected`
-- `updateSignerName`
-- `updateAdditionalText`
-- `updateSignaturePosition`
-- `signPdf` / `signPdfSuccess` / `signPdfFailure`
+État principal : `selectedFile`, `signerName`, `additionalText`, `signaturePosition(pageNumber/x/y)`, `loading`, `error`, `signedPdf`.
 
-Selectors:
-- `selectedFile`
-- `signerName`
-- `additionalText`
-- `signaturePosition`
-- `loading`
-- `error`
+## Lazy loading
+Route principale : `/pdf-signature` chargée via `loadChildren` dans `app.routes.ts`.
 
 ## Lancement
+1. Backend (Spring) sur `http://localhost:8080`.
+2. Frontend :
 ```bash
 npm install
 npm start
 ```
-Backend attendu: `http://localhost:8080/api/pdf/sign`.
+3. Ouvrir `http://localhost:4200`.
+
+## Workflow utilisateur
+1. Importer un PDF.
+2. Vérifier toutes les pages dans la colonne de prévisualisation.
+3. Saisir nom + texte optionnel.
+4. Déplacer la signature sur la page souhaitée.
+5. Cliquer sur **Signer et télécharger**.

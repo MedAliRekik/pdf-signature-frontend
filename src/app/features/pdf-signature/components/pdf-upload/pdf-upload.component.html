@@ -1,5 +1,6 @@
-<div class="card">
+<mat-card>
   <h3>Importer un PDF</h3>
-  <input type="file" accept="application/pdf" (change)="onFileChange($event)" />
+  <button mat-raised-button color="primary" (click)="fileInput.click()"><mat-icon>upload_file</mat-icon> Choisir un fichier</button>
+  <input #fileInput hidden type="file" accept="application/pdf" (change)="onFileChange($event)"/>
   <p>Taille max: {{ maxFileSizeBytes / (1024 * 1024) }} Mo</p>
-</div>
+</mat-card>

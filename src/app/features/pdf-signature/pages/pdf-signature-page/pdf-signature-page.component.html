@@ -9,15 +9,13 @@
       (additionalTextChange)="onAdditionalTextChange($event)"
     />
     <app-signature-actions [loading]="(loading$ | async) ?? false" (sign)="onSign()" />
-    @if(error$ | async; as error){<div class="error">{{ error }}</div>}
     <app-signature-result [signedPdf]="signedPdf$ | async" (clear)="clearSignedResult()" />
   </div>
   <div class="right">
     <app-pdf-preview
       [file]="(selectedFile$ | async)"
       [signerName]="(signerName$ | async) ?? ''"
-      [signatureX]="((signaturePosition$ | async)?.x) ?? 0"
-      [signatureY]="((signaturePosition$ | async)?.y) ?? 0"
+      [signaturePosition]="(signaturePosition$ | async) ?? {pageNumber:1,x:24,y:24}"
       (signatureMoved)="onSignatureMoved($event)"
     />
   </div>
