@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -15,11 +16,13 @@ import {
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import * as pdfjsLib from 'pdfjs-dist';
+import { firstValueFrom } from 'rxjs';
+import { filter, startWith, take } from 'rxjs/operators';
 import { PDFDocumentProxy, PDFPageProxy, RenderTask } from 'pdfjs-dist/types/src/display/api';
 import { SignaturePosition } from '../../models/signature-position.model';
 import { DraggableSignatureComponent } from '../draggable-signature/draggable-signature.component';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
 
 interface RenderedPage { pageNumber: number; width: number; height: number; boundaryId: string; }
 
@@ -46,6 +49,8 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
   private activeRenderTasks: RenderTask[] = [];
   private isViewReady = false;
   private pendingRender = false;
+
+  constructor(private readonly cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     this.isViewReady = true;
@@ -99,8 +104,8 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
         height: 0,
         boundaryId: `pdf-page-boundary-${index + 1}`
       }));
-
-      await new Promise(resolve => setTimeout(resolve));
+      this.cdr.detectChanges();
+      await this.waitForCanvases(this.renderedPages.length);
 
       for (const pageMeta of this.renderedPages) {
         if (token !== this.renderToken || !this.pdfDocument) {
@@ -118,6 +123,16 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
         void this.renderPdf();
       }
     }
+  }
+
+  private async waitForCanvases(expectedCount: number): Promise<void> {
+    await firstValueFrom(
+      this.canvasRefs.changes.pipe(
+        startWith(this.canvasRefs),
+        filter(() => this.canvasRefs.length >= expectedCount),
+        take(1)
+      )
+    );
   }
 
   onSignatureMove(position: { x: number; y: number }, page: RenderedPage): void {
