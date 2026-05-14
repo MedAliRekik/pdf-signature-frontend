@@ -1,9 +1,24 @@
-<section>
-  <h1>Signature visuelle de PDF</h1>
-  <app-pdf-upload [maxFileSizeBytes]="maxFileSizeBytes" (fileSelected)="onFileSelected($event)" (validationError)="onValidationError($event)" />
-  <app-signature-form [initialValue]="formValue$ | async" [isLoading]="(isLoading$ | async) ?? false" (formSubmit)="onFormSubmit($event)" />
-  @if (error$ | async; as error) {
-    <p>{{ error }}</p>
-  }
-  <app-signature-result [signedPdf]="signedPdf$ | async" (clear)="clearSignedResult()" />
+<section class="layout">
+  <div class="left">
+    <app-pdf-upload [maxFileSizeBytes]="maxFileSizeBytes" (fileSelected)="onFileSelected($event)" (validationError)="onValidationError($event)" />
+    <app-signature-form
+      [signerName]="(signerName$ | async) ?? ''"
+      [additionalText]="(additionalText$ | async) ?? ''"
+      [isLoading]="(loading$ | async) ?? false"
+      (signerNameChange)="onSignerNameChange($event)"
+      (additionalTextChange)="onAdditionalTextChange($event)"
+    />
+    <app-signature-actions [loading]="(loading$ | async) ?? false" (sign)="onSign()" />
+    @if(error$ | async; as error){<div class="error">{{ error }}</div>}
+    <app-signature-result [signedPdf]="signedPdf$ | async" (clear)="clearSignedResult()" />
+  </div>
+  <div class="right">
+    <app-pdf-preview
+      [file]="(selectedFile$ | async)"
+      [signerName]="(signerName$ | async) ?? ''"
+      [signatureX]="((signaturePosition$ | async)?.x) ?? 0"
+      [signatureY]="((signaturePosition$ | async)?.y) ?? 0"
+      (signatureMoved)="onSignatureMoved($event)"
+    />
+  </div>
 </section>

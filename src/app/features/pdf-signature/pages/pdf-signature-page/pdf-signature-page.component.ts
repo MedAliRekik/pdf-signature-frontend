@@ -1,24 +1,31 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { PdfPreviewComponent } from '../../components/pdf-preview/pdf-preview.component';
 import { PdfUploadComponent } from '../../components/pdf-upload/pdf-upload.component';
+import { SignatureActionsComponent } from '../../components/signature-actions/signature-actions.component';
 import { SignatureFormComponent } from '../../components/signature-form/signature-form.component';
 import { SignatureResultComponent } from '../../components/signature-result/signature-result.component';
-import { PdfSignatureRequest } from '../../models/pdf-signature-request';
-import { clearResult, setFile, signPdf, signPdfFailure, updateForm } from '../../store/pdf-signature.actions';
-import { selectError, selectFormValue, selectIsLoading, selectSignedPdf } from '../../store/pdf-signature.selectors';
+import { clearResult, signPdf, signPdfFailure, updateAdditionalText, updateSignaturePosition, updateSignerName, uploadPdfSelected } from '../../store/pdf-signature.actions';
+import { additionalText, loading, selectError, selectSelectedFile, selectSignedPdf, signaturePosition, signerName } from '../../store/pdf-signature.selectors';
 
-@Component({ selector: 'app-pdf-signature-page', standalone: true, imports: [AsyncPipe, PdfUploadComponent, SignatureFormComponent, SignatureResultComponent], templateUrl: './pdf-signature-page.component.html', styleUrl: './pdf-signature-page.component.scss' })
+@Component({ selector: 'app-pdf-signature-page', standalone: true, imports: [AsyncPipe, PdfUploadComponent, SignatureFormComponent, PdfPreviewComponent, SignatureActionsComponent, SignatureResultComponent], templateUrl: './pdf-signature-page.component.html', styleUrl: './pdf-signature-page.component.scss' })
 export class PdfSignaturePageComponent {
   private readonly store = inject(Store);
   readonly maxFileSizeBytes = 5 * 1024 * 1024;
   readonly error$ = this.store.select(selectError);
-  readonly isLoading$ = this.store.select(selectIsLoading);
+  readonly loading$ = this.store.select(loading);
+  readonly selectedFile$ = this.store.select(selectSelectedFile);
+  readonly signerName$ = this.store.select(signerName);
+  readonly additionalText$ = this.store.select(additionalText);
+  readonly signaturePosition$ = this.store.select(signaturePosition);
   readonly signedPdf$ = this.store.select(selectSignedPdf);
-  readonly formValue$ = this.store.select(selectFormValue);
 
-  onFileSelected(file: File): void { this.store.dispatch(setFile({ file })); }
+  onFileSelected(file: File): void { this.store.dispatch(uploadPdfSelected({ file })); }
   onValidationError(error: string): void { this.store.dispatch(signPdfFailure({ error })); }
-  onFormSubmit(formValue: PdfSignatureRequest): void { this.store.dispatch(updateForm({ formValue })); this.store.dispatch(signPdf()); }
+  onSignerNameChange(value: string): void { this.store.dispatch(updateSignerName({ signerName: value })); }
+  onAdditionalTextChange(value: string): void { this.store.dispatch(updateAdditionalText({ additionalText: value })); }
+  onSignatureMoved(position: { x: number; y: number; pageNumber: number }): void { this.store.dispatch(updateSignaturePosition({ ...position, isPlaced: true })); }
+  onSign(): void { this.store.dispatch(signPdf()); }
   clearSignedResult(): void { this.store.dispatch(clearResult()); }
 }
