@@ -1,33 +1,38 @@
+<section class="hero mat-elevation-z1">
+  <h1>Signature PDF professionnelle</h1>
+  <p>Importer → Placer → Signer → Télécharger</p>
+  <div class="badges">
+    <span>PDF sécurisé</span>
+    <span>Aucun stockage</span>
+    <span>Traitement temporaire du document</span>
+  </div>
+</section>
+
 <section class="layout">
   <aside class="left">
     <app-pdf-upload [maxFileSizeBytes]="maxFileSizeBytes" (fileSelected)="onFileSelected($event)" (validationError)="onValidationError($event)" />
 
     <mat-card class="status-card">
-      <h3>État</h3>
+      <h3>Confidentialité & limites</h3>
+      <ul>
+        <li>Votre document n'est pas stocké par cette application frontend.</li>
+        <li>Le PDF est uniquement utilisé pour générer le fichier signé.</li>
+        <li>Aucune donnée n'est conservée après le traitement côté application.</li>
+        <li>Fichier traité uniquement pendant la session active.</li>
+        <li>Signature visuelle simple (non certifiée électroniquement).</li>
+      </ul>
       <div class="status-line" *ngIf="!(selectedFile$ | async)">Aucun PDF sélectionné</div>
       <div class="status-line" *ngIf="(loading$ | async)">Signature en cours…</div>
       <div class="status-line" *ngIf="(selectedFile$ | async) && !(loading$ | async)">PDF chargé</div>
-      <div class="status-line" *ngIf="(signerName$ | async)">Signature prête</div>
       <div class="status-line error" *ngIf="error$ | async as error">{{ error }}</div>
     </mat-card>
 
-    <app-signature-form
-      [signerName]="(signerName$ | async) ?? ''"
-      [additionalText]="(additionalText$ | async) ?? ''"
-      [isLoading]="(loading$ | async) ?? false"
-      (signerNameChange)="onSignerNameChange($event)"
-      (additionalTextChange)="onAdditionalTextChange($event)"
-    />
+    <app-signature-form [signerName]="(signerName$ | async) ?? ''" [additionalText]="(additionalText$ | async) ?? ''" [isLoading]="(loading$ | async) ?? false" (signerNameChange)="onSignerNameChange($event)" (additionalTextChange)="onAdditionalTextChange($event)" />
     <app-signature-actions [loading]="(loading$ | async) ?? false" (sign)="onSign()" />
     <app-signature-result [signedPdf]="signedPdf$ | async" (clear)="clearSignedResult()" />
   </aside>
 
   <main class="right">
-    <app-pdf-preview
-      [file]="(selectedFile$ | async)"
-      [signerName]="(signerName$ | async) ?? ''"
-      [signaturePosition]="(signaturePosition$ | async) ?? {pageNumber:1,x:24,y:24}"
-      (signatureMoved)="onSignatureMoved($event)"
-    />
+    <app-pdf-preview [file]="(selectedFile$ | async)" [signerName]="(signerName$ | async) ?? ''" [signaturePosition]="(signaturePosition$ | async) ?? {pageNumber:1,x:24,y:24}" (signatureMoved)="onSignatureMoved($event)" />
   </main>
 </section>

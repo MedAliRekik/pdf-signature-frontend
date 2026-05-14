@@ -52,7 +52,7 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ((changes['file'] || changes['signaturePosition']) && this.isViewReady) {
+    if (changes['file'] && this.isViewReady) {
       void this.renderPdf();
     }
   }
