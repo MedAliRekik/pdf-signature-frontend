@@ -1,14 +1,18 @@
-<div class="preview-card" *ngIf="file; else emptyState">
-  <div class="canvas-wrapper">
-    <canvas #canvas></canvas>
-    <app-draggable-signature
-      [x]="signatureX"
-      [y]="canvasHeight - signatureY"
-      [signerName]="signerName"
-      (positionChange)="onSignatureMove($event)"
-    />
+<mat-card class="preview-card" *ngIf="file; else emptyState">
+  <div class="preview-scroll">
+    <div class="page-block" *ngFor="let page of renderedPages">
+      <div class="page-label">Page {{ page.pageNumber }}</div>
+      <div class="canvas-wrapper">
+        <canvas #canvas></canvas>
+        <app-draggable-signature
+          *ngIf="signaturePosition.pageNumber === page.pageNumber"
+          [x]="signaturePosition.x"
+          [y]="page.height - signaturePosition.y"
+          [signerName]="signerName"
+          (positionChange)="onSignatureMove($event, page)"
+        />
+      </div>
+    </div>
   </div>
-</div>
-<ng-template #emptyState>
-  <div class="empty">Importez un PDF pour afficher la prévisualisation.</div>
-</ng-template>
+</mat-card>
+<ng-template #emptyState><mat-card class="empty">Importez un PDF pour afficher la prévisualisation complète.</mat-card></ng-template>

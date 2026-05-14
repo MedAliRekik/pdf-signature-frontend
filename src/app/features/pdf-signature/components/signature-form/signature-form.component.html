@@ -1,9 +1,7 @@
-<div class="card">
+<mat-card>
   <h3>Informations de signature</h3>
   <form [formGroup]="form">
-    <label>Nom du signataire</label>
-    <input formControlName="signerName" (input)="emitSignerName()" placeholder="Ex: Jean Dupont" />
-    <label>Texte additionnel</label>
-    <input formControlName="additionalText" (input)="emitAdditionalText()" placeholder="Bon pour accord" />
+    <mat-form-field appearance="outline" class="w-100"><mat-label>Nom du signataire</mat-label><input matInput formControlName="signerName" (input)="emitSignerName()"/></mat-form-field>
+    <mat-form-field appearance="outline" class="w-100"><mat-label>Texte additionnel</mat-label><input matInput formControlName="additionalText" (input)="emitAdditionalText()"/></mat-form-field>
   </form>
-</div>
+</mat-card>

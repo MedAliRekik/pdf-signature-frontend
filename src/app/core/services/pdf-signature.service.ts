@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { API_CONFIG } from '../config/api.config';
 import { PdfSignatureRequest } from '../../features/pdf-signature/models/pdf-signature-request';
 
 @Injectable({ providedIn: 'root' })
 export class PdfSignatureService {
-  private readonly endpoint = `${environment.apiBaseUrl}/api/pdf/sign`;
+  private readonly endpoint = API_CONFIG.pdfSignUrl;
 
   constructor(private readonly http: HttpClient) {}
 
