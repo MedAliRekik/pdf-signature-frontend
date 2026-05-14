@@ -8,6 +8,7 @@ export const additionalText = createSelector(selectPdfSignatureState, state => s
 export const signaturePosition = createSelector(selectPdfSignatureState, state => state.signaturePosition);
 export const loading = createSelector(selectStatus, status => status === 'loading');
 export const selectIsSignaturePlaced = createSelector(selectPdfSignatureState, state => state.isSignaturePlaced);
+export const selectIsSignatureVisible = createSelector(selectPdfSignatureState, state => state.isSignatureVisible);
 
 export const selectSignRequest = createSelector(
   signerName,

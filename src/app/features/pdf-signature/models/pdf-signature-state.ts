@@ -8,6 +8,7 @@ export interface PdfSignatureState {
   additionalText: string;
   signaturePosition: Pick<PdfSignatureRequest, 'x' | 'y' | 'pageNumber'>;
   isSignaturePlaced: boolean;
+  isSignatureVisible: boolean;
   status: PdfSignatureStatus;
   signedPdf: Blob | null;
   error: string | null;

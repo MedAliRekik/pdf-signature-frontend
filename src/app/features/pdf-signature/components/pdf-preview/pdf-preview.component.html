@@ -5,7 +5,7 @@
       <div class="canvas-wrapper" [id]="page.boundaryId">
         <canvas #canvas></canvas>
         <app-draggable-signature
-          *ngIf="signaturePosition.pageNumber === page.pageNumber"
+          *ngIf="isSignatureVisible && signaturePosition.pageNumber === page.pageNumber"
           [x]="signaturePosition.x"
           [y]="getSignatureTop(page)"
           [signerName]="signerName"

@@ -1,68 +1,76 @@
 # PDF Signature Frontend (Angular)
 
-Application Angular portfolio pour **signature visuelle de PDF** avec interface professionnelle, architecture évolutive, et messages de confiance clairs.
+Application Angular portfolio pour la signature visuelle de PDF avec un workflow guidé, une UX professionnelle, NgRx et Angular Material.
 
-## Structure applicative
+## Architecture
 
-```text
-src/app
-├── layout
-│   ├── header
-│   ├── footer
-│   └── main-layout
-├── core
-├── shared
-└── features
-    └── pdf-signature
+- Standalone components + lazy loading de la feature `pdf-signature`.
+- Layout global Header / Body / Footer.
+- State management NgRx (actions/reducer/selectors/effects).
+
+## Nouveau workflow UX/UI
+
+1. Importer le PDF
+2. Saisir le nom
+3. Ajouter la signature au PDF
+4. Placer la signature par glisser-déposer
+5. Signer et télécharger
+
+### Layout
+
+- Panneau gauche : étapes, upload, formulaire, prévisualisation de signature, statuts, actions.
+- Panneau droit : prévisualisation PDF multi-pages.
+
+### États visuels gérés
+
+- Aucun PDF sélectionné
+- PDF chargé
+- Signature non ajoutée
+- Signature ajoutée
+- Chargement
+- Succès
+- Erreur
+
+## Signature visible et plaçable
+
+- Zone « Prévisualisation de la signature » dès la saisie du nom.
+- Bouton explicite « Ajouter la signature au PDF ».
+- Signature affichée au-dessus du canvas PDF (z-index supérieur).
+- Parent PDF en `position: relative`, signature en `position: absolute`.
+- Drag & drop via Angular CDK (`cdkDrag`, `cdkDragBoundary`).
+- Curseur `grab`, fond léger, contour discret, police manuscrite lisible.
+- Mise à jour automatique de `pageNumber`, `x`, `y` dans le state NgRx après déplacement.
+
+## Sécurité frontend et bonnes pratiques
+
+- Validation stricte du type MIME `application/pdf`.
+- Validation de taille maximale fichier.
+- Nettoyage des object URLs après téléchargement (`URL.revokeObjectURL`).
+- Gestion d'erreurs HTTP avec message utilisateur non sensible.
+- Pas d’affichage de stack trace brute à l’utilisateur.
+- Aucune donnée métier sensible ajoutée au store NgRx.
+
+## Audit des dépendances (npm audit)
+
+Commande exécutée :
+
+```bash
+npm audit --json
 ```
 
-- `main-layout` orchestre un layout global réutilisable : **Header / Body / Footer**.
-- `features/pdf-signature` contient la page métier de signature.
-- L’application reste en **standalone components**, avec lazy loading de la feature.
+Résultat au 14 mai 2026 : 6 vulnérabilités **high**, toutes transitives dans la toolchain de build (`@angular/cli`, `@angular-devkit/build-angular`, `copy-webpack-plugin`, `pacote`, `tar`, `serialize-javascript`).
 
-## Workflow utilisateur
+### Pourquoi elles ne sont pas corrigées ici
 
-1. Importer un PDF.
-2. Visualiser toutes les pages (scroll vertical).
-3. Générer/afficher une signature visuelle.
-4. Déplacer la signature dans la zone PDF.
-5. Signer puis télécharger le PDF retourné par le backend.
+- La correction proposée par npm impose un upgrade majeur vers Angular CLI/Devkit 21.
+- Le projet doit rester cohérent en Angular 19 (contrainte explicite).
+- Faire cet upgrade casserait potentiellement l’écosystème actuel et sort du scope de correction sans risque.
 
-## Affichage PDF multi-pages
+### Plan de remédiation recommandé
 
-- Rendu PDF avec PDF.js sur **un canvas par page**.
-- Prévisualisation scrollable verticalement.
-- Nettoyage des canvas à chaque nouveau chargement.
-- Annulation des `renderTask` en cours avant un nouveau rendu.
-- Mécanisme anti-rendu parallèle pour éviter l’erreur :
-  - `Cannot use the same canvas during multiple render() operations`.
-
-## Signature visuelle
-
-- Signature affichée au-dessus du PDF.
-- Signature déplaçable (drag & drop) et bornée à la page active.
-- Mise à jour automatique de `pageNumber`, `x`, `y` envoyés au backend.
-
-## Sécurité et confidentialité (discours honnête)
-
-Messages affichés dans l’UI :
-- « Votre document n’est pas stocké »
-- « Traitement temporaire du PDF »
-- « Signature visuelle non certifiée »
-- « Aucun contenu PDF n’est affiché dans les logs »
-
-Ce projet **ne promet pas** :
-- signature électronique certifiée,
-- chiffrement complet,
-- sécurité 100%.
-
-## Stack technique
-
-- Angular (standalone)
-- Angular Material
-- NgRx (actions, reducer, selectors, effects)
-- Lazy loading (`pdf-signature.routes.ts`)
-- PDF.js
+- Planifier une migration contrôlée Angular 19 → 20/21.
+- Exécuter les migrations officielles (`ng update`) avec tests de non-régression.
+- Rejouer `npm audit --json` après migration.
 
 ## Lancement
 
@@ -72,9 +80,3 @@ npm start
 ```
 
 Puis ouvrir `http://localhost:4200`.
-
-## Limites actuelles
-
-- Certification légale/eIDAS non implémentée.
-- Chiffrement bout-en-bout non implémenté.
-- Les garanties finales de conservation et de sécurité dépendent du backend déployé.

@@ -38,6 +38,7 @@ export class PdfPreviewComponent implements AfterViewInit, OnChanges, OnDestroy 
   @Input() file: File | null = null;
   @Input() signerName = '';
   @Input() signaturePosition: SignaturePosition = { pageNumber: 1, x: 24, y: 24 };
+  @Input() isSignatureVisible = false;
   @Output() signatureMoved = new EventEmitter<SignaturePosition>();
 
   renderedPages: RenderedPage[] = [];

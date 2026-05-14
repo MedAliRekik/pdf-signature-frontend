@@ -2,6 +2,7 @@ import { createFeature, createReducer, on } from '@ngrx/store';
 import { PdfSignatureState } from '../models/pdf-signature-state';
 import {
   clearResult,
+  setSignatureVisible,
   signPdf,
   signPdfFailure,
   signPdfSuccess,
@@ -15,8 +16,9 @@ const initialState: PdfSignatureState = {
   selectedFile: null,
   signerName: '',
   additionalText: '',
-  signaturePosition: { pageNumber: 1, x: 0, y: 0 },
+  signaturePosition: { pageNumber: 1, x: 24, y: 24 },
   isSignaturePlaced: false,
+  isSignatureVisible: false,
   status: 'idle' as const,
   signedPdf: null,
   error: null
@@ -26,9 +28,10 @@ export const pdfSignatureFeature = createFeature({
   name: 'pdfSignature',
   reducer: createReducer(
     initialState,
-    on(uploadPdfSelected, (state, { file }) => ({ ...state, selectedFile: file, error: null, signedPdf: null })),
-    on(updateSignerName, (state, { signerName }) => ({ ...state, signerName })),
+    on(uploadPdfSelected, (state, { file }) => ({ ...state, selectedFile: file, error: null, signedPdf: null, isSignaturePlaced: false, isSignatureVisible: false })),
+    on(updateSignerName, (state, { signerName }) => ({ ...state, signerName, isSignatureVisible: signerName.trim().length > 0 ? state.isSignatureVisible : false })),
     on(updateAdditionalText, (state, { additionalText }) => ({ ...state, additionalText })),
+    on(setSignatureVisible, (state, { visible }) => ({ ...state, isSignatureVisible: visible, isSignaturePlaced: visible ? state.isSignaturePlaced : false })),
     on(updateSignaturePosition, (state, { x, y, pageNumber, isPlaced }) => ({
       ...state,
       signaturePosition: { x, y, pageNumber },
