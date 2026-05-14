@@ -17,7 +17,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
     </div>
   `,
   styles: [
-    `.signature{position:absolute;cursor:grab;font-family:'Brush Script MT',cursive;font-size:32px;color:#0f172a;background:rgba(255,255,255,.95);padding:.35rem .65rem;border-radius:.6rem;border:1px dashed #64748b;box-shadow:0 8px 20px rgba(15,23,42,.15);user-select:none;z-index:10;white-space:nowrap;pointer-events:auto;touch-action:none;}`,
+    `.signature{position:absolute;cursor:grab;font-family:'Brush Script MT',cursive;font-size:32px;color:#0f172a;background:rgba(255,255,255,.95);padding:.35rem .65rem;border-radius:.6rem;border:1px dashed #64748b;box-shadow:0 8px 20px rgba(15,23,42,.15);user-select:none;z-index:20;white-space:nowrap;pointer-events:auto;touch-action:none;}`,
     `.signature:active{cursor:grabbing;}`
   ]
 })

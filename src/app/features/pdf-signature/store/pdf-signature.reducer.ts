@@ -16,7 +16,7 @@ const initialState: PdfSignatureState = {
   selectedFile: null,
   signerName: '',
   additionalText: '',
-  signaturePosition: { pageNumber: 1, x: 24, y: 24 },
+  signaturePosition: { pageNumber: 1, x: 100, y: 100 },
   isSignaturePlaced: false,
   isSignatureVisible: false,
   status: 'idle' as const,

@@ -40,7 +40,10 @@ export class PdfSignaturePageComponent {
   onValidationError(error: string): void { this.store.dispatch(signPdfFailure({ error })); }
   onSignerNameChange(value: string): void { this.store.dispatch(updateSignerName({ signerName: value })); }
   onAdditionalTextChange(value: string): void { this.store.dispatch(updateAdditionalText({ additionalText: value })); }
-  onAddSignature(): void { this.store.dispatch(setSignatureVisible({ visible: true })); }
+  onAddSignature(): void {
+    this.store.dispatch(updateSignaturePosition({ pageNumber: 1, x: 100, y: 100, isPlaced: true }));
+    this.store.dispatch(setSignatureVisible({ visible: true }));
+  }
   onSignatureMoved(position: { x: number; y: number; pageNumber: number }): void { this.store.dispatch(updateSignaturePosition({ ...position, isPlaced: true })); }
   onSign(): void { this.store.dispatch(signPdf()); }
   clearSignedResult(): void { this.store.dispatch(clearResult()); }
