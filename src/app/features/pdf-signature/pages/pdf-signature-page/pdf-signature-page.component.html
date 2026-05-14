@@ -3,8 +3,8 @@
   <p>Importer → Placer → Signer → Télécharger</p>
   <div class="badges">
     <span>PDF sécurisé</span>
-    <span>Aucun stockage</span>
-    <span>Traitement temporaire du document</span>
+    <span>Traitement temporaire du PDF</span>
+    <span>Aucun contenu PDF n'est affiché dans les logs</span>
   </div>
 </section>
 
@@ -13,13 +13,12 @@
     <app-pdf-upload [maxFileSizeBytes]="maxFileSizeBytes" (fileSelected)="onFileSelected($event)" (validationError)="onValidationError($event)" />
 
     <mat-card class="status-card">
-      <h3>Confidentialité & limites</h3>
+      <h3>Sécurité et confiance</h3>
       <ul>
-        <li>Votre document n'est pas stocké par cette application frontend.</li>
-        <li>Le PDF est uniquement utilisé pour générer le fichier signé.</li>
-        <li>Aucune donnée n'est conservée après le traitement côté application.</li>
-        <li>Fichier traité uniquement pendant la session active.</li>
-        <li>Signature visuelle simple (non certifiée électroniquement).</li>
+        <li>Votre document n'est pas stocké.</li>
+        <li>Traitement temporaire du PDF pendant la session active.</li>
+        <li>Signature visuelle non certifiée.</li>
+        <li>Aucun contenu PDF n'est affiché dans les logs.</li>
       </ul>
       <div class="status-line" *ngIf="!(selectedFile$ | async)">Aucun PDF sélectionné</div>
       <div class="status-line" *ngIf="(loading$ | async)">Signature en cours…</div>

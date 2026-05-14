@@ -1,93 +1,80 @@
 # PDF Signature Frontend (Angular)
 
-Application Angular portfolio pour **signature visuelle de PDF** avec UX professionnelle, confidentialité expliquée clairement, et architecture scalable.
+Application Angular portfolio pour **signature visuelle de PDF** avec interface professionnelle, architecture évolutive, et messages de confiance clairs.
 
-## Objectif produit
-Permettre à l'utilisateur de :
-1. Importer un PDF.
-2. Visualiser toutes les pages.
-3. Générer une signature visuelle depuis son nom.
-4. Placer la signature (drag & drop) sur une page.
-5. Télécharger le PDF signé par le backend.
-
-## Workflow utilisateur
-**Importer → Placer → Signer → Télécharger**
-
-- Upload validé (`application/pdf`, taille max).
-- Prévisualisation multi-pages via PDF.js (scroll vertical).
-- Signature déplaçable par page.
-- Calcul et envoi `pageNumber`, `x`, `y` au backend.
-- Retour backend en `Blob` puis téléchargement local.
-
-## Confidentialité & sécurité (discours honnête)
-- Traitement temporaire du document.
-- Aucun stockage applicatif prévu côté frontend.
-- Données utilisées uniquement pendant la session.
-- Signature **visuelle simple** : ce projet ne prétend pas fournir une signature électronique certifiée.
-
-## Limites actuelles
-- Certification légale/eIDAS non implémentée.
-- Chiffrement bout-en-bout non implémenté.
-- Les garanties définitives de conservation dépendent du backend déployé.
-
-## Stack technique
-- Angular (standalone components)
-- Angular Material
-- NgRx (actions, reducer, selectors, effects)
-- Lazy loading de la feature `pdf-signature`
-- PDF.js pour rendu multi-pages
-
-## Architecture
+## Structure applicative
 
 ```text
 src/app
+├── layout
+│   ├── header
+│   ├── footer
+│   └── main-layout
 ├── core
-│   ├── config
-│   ├── constants
-│   └── services
 ├── shared
-│   ├── components
-│   └── material
 └── features
     └── pdf-signature
-        ├── components
-        ├── models
-        ├── pages
-        ├── store
-        └── pdf-signature.routes.ts
 ```
 
-## NgRx : state géré
-- `selectedFile`
-- `signerName`
-- `additionalText`
-- `signaturePosition`
-- `isSignaturePlaced`
-- `status` (`idle | loading | success | error`)
-- `signedPdf`
-- `error`
+- `main-layout` orchestre un layout global réutilisable : **Header / Body / Footer**.
+- `features/pdf-signature` contient la page métier de signature.
+- L’application reste en **standalone components**, avec lazy loading de la feature.
 
-## Backend attendu
-- Endpoint: `POST {apiBaseUrl}/api/pdf/sign`
-- multipart:
-  - `file`: PDF
-  - `request`: JSON `{ signerName, additionalText, pageNumber, x, y }`
-- Réponse: PDF signé (binaire)
+## Workflow utilisateur
 
-## Configuration
-- `src/environments/environment.ts` : URL backend (`apiBaseUrl`)
-- `src/app/core/config/api.config.ts` : endpoints API
-- `src/app/core/constants/file.constants.ts` : type MIME + limite taille
+1. Importer un PDF.
+2. Visualiser toutes les pages (scroll vertical).
+3. Générer/afficher une signature visuelle.
+4. Déplacer la signature dans la zone PDF.
+5. Signer puis télécharger le PDF retourné par le backend.
+
+## Affichage PDF multi-pages
+
+- Rendu PDF avec PDF.js sur **un canvas par page**.
+- Prévisualisation scrollable verticalement.
+- Nettoyage des canvas à chaque nouveau chargement.
+- Annulation des `renderTask` en cours avant un nouveau rendu.
+- Mécanisme anti-rendu parallèle pour éviter l’erreur :
+  - `Cannot use the same canvas during multiple render() operations`.
+
+## Signature visuelle
+
+- Signature affichée au-dessus du PDF.
+- Signature déplaçable (drag & drop) et bornée à la page active.
+- Mise à jour automatique de `pageNumber`, `x`, `y` envoyés au backend.
+
+## Sécurité et confidentialité (discours honnête)
+
+Messages affichés dans l’UI :
+- « Votre document n’est pas stocké »
+- « Traitement temporaire du PDF »
+- « Signature visuelle non certifiée »
+- « Aucun contenu PDF n’est affiché dans les logs »
+
+Ce projet **ne promet pas** :
+- signature électronique certifiée,
+- chiffrement complet,
+- sécurité 100%.
+
+## Stack technique
+
+- Angular (standalone)
+- Angular Material
+- NgRx (actions, reducer, selectors, effects)
+- Lazy loading (`pdf-signature.routes.ts`)
+- PDF.js
 
 ## Lancement
+
 ```bash
 npm install
 npm start
 ```
+
 Puis ouvrir `http://localhost:4200`.
 
-## Prochaines évolutions
-- Signature électronique certifiée (prestataire qualifié).
-- Historique utilisateur côté backend (optionnel, avec consentement).
-- Zoom PDF et alignement assisté.
-- E2E tests et monitoring UX.
+## Limites actuelles
+
+- Certification légale/eIDAS non implémentée.
+- Chiffrement bout-en-bout non implémenté.
+- Les garanties finales de conservation et de sécurité dépendent du backend déployé.
