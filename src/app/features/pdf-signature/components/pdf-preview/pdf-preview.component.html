@@ -1,16 +1,18 @@
 <mat-card class="preview-card" *ngIf="file; else emptyState">
-  <div class="preview-scroll">
+  <div class="preview-scroll" #previewContainer>
     <div class="page-block" *ngFor="let page of renderedPages">
       <div class="page-label">Page {{ page.pageNumber }}</div>
-      <div class="canvas-wrapper" [id]="page.boundaryId">
+      <div class="canvas-wrapper" [id]="page.boundaryId" [attr.data-page-number]="page.pageNumber">
         <canvas #canvas></canvas>
         <app-draggable-signature
-          *ngIf="isSignatureVisible && signaturePosition.pageNumber === page.pageNumber"
-          [x]="signaturePosition.x"
-          [y]="getSignatureTop(page)"
-          [signerName]="signerName"
-          [boundarySelector]="'#' + page.boundaryId"
-          (positionChange)="onSignatureMove($event, page)"
+          *ngFor="let signature of getSignaturePage(page.pageNumber)"
+          [id]="signature.id"
+          [x]="signature.displayX"
+          [y]="signature.displayY"
+          [signerName]="signature.signerName || signerName"
+          [boundarySelector]="'.preview-scroll'"
+          (positionChange)="onSignatureMove($event)"
+          (remove)="signatureRemoved.emit($event)"
         />
       </div>
     </div>

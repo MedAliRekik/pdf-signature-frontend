@@ -5,18 +5,17 @@ export const { selectPdfSignatureState, selectSelectedFile, selectStatus, select
 
 export const signerName = createSelector(selectPdfSignatureState, state => state.signerName);
 export const additionalText = createSelector(selectPdfSignatureState, state => state.additionalText);
-export const signaturePosition = createSelector(selectPdfSignatureState, state => state.signaturePosition);
+export const signatures = createSelector(selectPdfSignatureState, state => state.signatures);
 export const loading = createSelector(selectStatus, status => status === 'loading');
-export const selectIsSignaturePlaced = createSelector(selectPdfSignatureState, state => state.isSignaturePlaced);
-export const selectIsSignatureVisible = createSelector(selectPdfSignatureState, state => state.isSignatureVisible);
+export const selectIsSignaturePlaced = createSelector(signatures, currentSignatures => currentSignatures.length > 0);
 
 export const selectSignRequest = createSelector(
   signerName,
   additionalText,
-  signaturePosition,
-  (currentSignerName, currentAdditionalText, currentSignaturePosition) => ({
+  signatures,
+  (currentSignerName, currentAdditionalText, currentSignatures) => ({
     signerName: currentSignerName,
     additionalText: currentAdditionalText,
-    ...currentSignaturePosition
+    signatures: currentSignatures
   })
 );
