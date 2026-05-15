@@ -25,8 +25,8 @@
     <mat-card class="status-card">
       <div class="status-line" *ngIf="!(selectedFile$ | async)">Aucun PDF sélectionné</div>
       <div class="status-line" *ngIf="(selectedFile$ | async)">PDF chargé</div>
-      <div class="status-line" *ngIf="!(isSignatureVisible$ | async)">Signature non ajoutée</div>
-      <div class="status-line" *ngIf="(isSignatureVisible$ | async)">Signature ajoutée</div>
+      <div class="status-line" *ngIf="!(isSignaturePlaced$ | async)">Aucune signature ajoutée</div>
+      <div class="status-line" *ngIf="(isSignaturePlaced$ | async)">Au moins une signature ajoutée</div>
       <div class="status-line" *ngIf="(loading$ | async)">Chargement…</div>
       <div class="status-line success" *ngIf="(signedPdf$ | async)">Succès</div>
       <div class="status-line error" *ngIf="error$ | async as error">Erreur: {{ error }}</div>
@@ -37,6 +37,6 @@
   </aside>
 
   <main class="right">
-    <app-pdf-preview [file]="(selectedFile$ | async)" [signerName]="(signerName$ | async) ?? ''" [signaturePosition]="(signaturePosition$ | async) ?? {pageNumber:1,x:100,y:100}" [isSignatureVisible]="(isSignatureVisible$ | async) ?? false" (signatureMoved)="onSignatureMoved($event)" />
+    <app-pdf-preview [file]="(selectedFile$ | async)" [signerName]="(signerName$ | async) ?? ''" [signatures]="(signatures$ | async) ?? []" (signatureMoved)="onSignatureMoved($event)" (signatureRemoved)="onSignatureRemoved($event)" />
   </main>
 </section>
