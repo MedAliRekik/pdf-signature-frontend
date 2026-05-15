@@ -12,8 +12,8 @@ import { PdfUploadComponent } from '../../components/pdf-upload/pdf-upload.compo
 import { SignatureActionsComponent } from '../../components/signature-actions/signature-actions.component';
 import { SignatureFormComponent } from '../../components/signature-form/signature-form.component';
 import { SignatureResultComponent } from '../../components/signature-result/signature-result.component';
-import { clearResult, setSignatureVisible, signPdf, signPdfFailure, updateAdditionalText, updateSignaturePosition, updateSignerName, uploadPdfSelected } from '../../store/pdf-signature.actions';
-import { additionalText, loading, selectError, selectIsSignaturePlaced, selectIsSignatureVisible, selectSelectedFile, selectSignedPdf, signaturePosition, signerName } from '../../store/pdf-signature.selectors';
+import { addSignature, clearResult, removeSignature, signPdf, signPdfFailure, updateAdditionalText, updateSignaturePosition, updateSignerName, uploadPdfSelected } from '../../store/pdf-signature.actions';
+import { additionalText, loading, selectError, selectIsSignaturePlaced, selectSelectedFile, selectSignedPdf, signatures, signerName } from '../../store/pdf-signature.selectors';
 
 @Component({ selector: 'app-pdf-signature-page', standalone: true, imports: [AsyncPipe, NgIf, MatSnackBarModule, MatCardModule, MatButtonModule, MatIconModule, PdfUploadComponent, SignatureFormComponent, PdfPreviewComponent, SignatureActionsComponent, SignatureResultComponent], templateUrl: './pdf-signature-page.component.html', styleUrl: './pdf-signature-page.component.scss' })
 export class PdfSignaturePageComponent {
@@ -26,8 +26,7 @@ export class PdfSignaturePageComponent {
   readonly selectedFile$ = this.store.select(selectSelectedFile);
   readonly signerName$ = this.store.select(signerName);
   readonly additionalText$ = this.store.select(additionalText);
-  readonly signaturePosition$ = this.store.select(signaturePosition);
-  readonly isSignatureVisible$ = this.store.select(selectIsSignatureVisible);
+  readonly signatures$ = this.store.select(signatures);
   readonly isSignaturePlaced$ = this.store.select(selectIsSignaturePlaced);
   readonly signedPdf$ = this.store.select(selectSignedPdf);
 
@@ -41,10 +40,13 @@ export class PdfSignaturePageComponent {
   onSignerNameChange(value: string): void { this.store.dispatch(updateSignerName({ signerName: value })); }
   onAdditionalTextChange(value: string): void { this.store.dispatch(updateAdditionalText({ additionalText: value })); }
   onAddSignature(): void {
-    this.store.dispatch(updateSignaturePosition({ pageNumber: 1, x: 100, y: 100, isPlaced: true }));
-    this.store.dispatch(setSignatureVisible({ visible: true }));
+    const id = `sig-${crypto.randomUUID()}`;
+    this.store.dispatch(addSignature({ signature: { id, signerName: '', pageNumber: 1, x: 100, y: 100, displayX: 100, displayY: 100 } }));
   }
-  onSignatureMoved(position: { x: number; y: number; pageNumber: number }): void { this.store.dispatch(updateSignaturePosition({ ...position, isPlaced: true })); }
+  onSignatureMoved(position: { id: string; x: number; y: number; pageNumber: number; displayX: number; displayY: number }): void {
+    this.store.dispatch(updateSignaturePosition(position));
+  }
+  onSignatureRemoved(id: string): void { this.store.dispatch(removeSignature({ id })); }
   onSign(): void { this.store.dispatch(signPdf()); }
   clearSignedResult(): void { this.store.dispatch(clearResult()); }
 }
