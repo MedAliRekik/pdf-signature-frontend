@@ -1,5 +1,5 @@
 .preview-card{height:calc(100vh - 130px);padding:1rem;position:relative;border-radius:16px}
-.preview-scroll{height:100%;overflow:auto;display:flex;flex-direction:column;gap:1rem}
+.preview-scroll{height:100%;overflow:auto;display:flex;flex-direction:column;gap:1rem;position:relative}
 .page-block{background:#f8fafc;padding:.75rem;border-radius:12px;border:1px solid #e2e8f0;box-shadow:0 2px 8px rgba(15,23,42,.05)}
 .page-label{font-weight:600;margin-bottom:.5rem;color:#334155}
 .canvas-wrapper{position:relative;display:inline-block;max-width:100%;min-height:240px;overflow:visible;isolation:isolate}

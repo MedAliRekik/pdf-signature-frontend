@@ -1,4 +1,4 @@
-import { PdfSignatureRequest } from './pdf-signature-request';
+import { SignaturePosition } from './signature-position.model';
 
 export type PdfSignatureStatus = 'idle' | 'loading' | 'success' | 'error';
 
@@ -6,9 +6,7 @@ export interface PdfSignatureState {
   selectedFile: File | null;
   signerName: string;
   additionalText: string;
-  signaturePosition: Pick<PdfSignatureRequest, 'x' | 'y' | 'pageNumber'>;
-  isSignaturePlaced: boolean;
-  isSignatureVisible: boolean;
+  signatures: SignaturePosition[];
   status: PdfSignatureStatus;
   signedPdf: Blob | null;
   error: string | null;
